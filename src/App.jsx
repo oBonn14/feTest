@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
-function App() {
-  const [count, setCount] = useState(0)
-
+import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import TableData from './Table';
+const { Header, Content, Footer } = Layout;
+const App = () => {
+  const {
+    token: { colorBgContainer },
+  } = theme.useToken();
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
-
-export default App
+    <Layout>
+      <Header
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <div className="demo-logo" />
+        <Menu theme="dark" mode="horizontal" />
+      </Header>
+      <Content
+        style={{
+          padding: '0 50px',
+        }}
+      >
+        <Breadcrumb
+          style={{
+            margin: '16px 0',
+          }}
+        >
+        </Breadcrumb>
+        <Layout
+          style={{
+            padding: '24px 0',
+            background: colorBgContainer,
+          }}
+        >
+          <Content
+            style={{
+              padding: '0 24px',
+              minHeight: 280,
+            }}
+          >
+            Content uhuy
+            <TableData/>
+          </Content>
+        </Layout>
+      </Content>
+      <Footer
+        style={{
+          textAlign: 'center',
+        }}
+      >
+      </Footer>
+    </Layout>
+  );
+};
+export default App;
