@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { Button, Modal } from 'antd'
+import FormInput from './Form'
+
+
 const ModalButton = () => {
     const [ modalOpen, setModalOpen ] = useState(false)
     return (
@@ -11,11 +14,10 @@ const ModalButton = () => {
             title='Add Contact'
             centered
             open={modalOpen}
-            onOk={() => setModalOpen(false)}
+            onOk={() => setModalOpen(false) }
             onCancel={() => setModalOpen(false)}
             >
-                <p>Spontan</p>
-                <p>uhuy</p>
+                <FormInput/>
             </Modal>
         </>
     )
