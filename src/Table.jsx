@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd'
 const originData = []
-for(let i = 0; i < 100; i++){
+for(let i = 1; i < 100; i++){
     originData.push({
         key: i.toString(),
         name: `edwar ${i}`,
@@ -15,8 +15,6 @@ const editTableCell = ({
     dataIndex,
     title,
     inputType,
-    record,
-    index,
     children,
     ...restProps
 }) => {

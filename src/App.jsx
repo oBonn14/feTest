@@ -1,5 +1,6 @@
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import TableData from './Table';
+import ModalButton from './Modal';
 const { Header, Content, Footer } = Layout;
 const App = () => {
   const {
@@ -39,6 +40,7 @@ const App = () => {
               minHeight: 280,
             }}
           >
+            <ModalButton/>
             Content uhuy
             <TableData/>
           </Content>
