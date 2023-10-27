@@ -1,13 +1,27 @@
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import React from 'react';
+import { Breadcrumb, Layout, Menu, theme, Alert } from 'antd';
 import TableData from './Table';
 import ModalButton from './Modal';
 const { Header, Content, Footer } = Layout;
 const App = () => {
+  const [isAlertVisible, setIsAlertVisible] = React.useState(false);
+  const [successMessage, setSuccessMessage] = React.useState('');
+
+  const handleSuccess = (message) => {
+    setIsAlertVisible(true);
+    setSuccessMessage(message);
+  };
+
+  const closeAlert = () => {
+    setIsAlertVisible(false);
+    setSuccessMessage('');
+  };
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   return (
     <Layout>
+      
       <Header
         style={{
           display: 'flex',
@@ -39,8 +53,17 @@ const App = () => {
               padding: '0 24px',
               minHeight: 280,
             }}
-          >
-            <ModalButton/>
+          >      
+            <ModalButton onSuccess={handleSuccess}/>
+            {isAlertVisible && (
+        <Alert
+          message={successMessage}
+          type="success"
+          showIcon
+          closable
+          onClose={closeAlert}
+        />
+      )}
             Content uhuy
             <TableData/>
           </Content>

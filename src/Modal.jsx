@@ -1,26 +1,41 @@
-import { useState } from 'react'
-import { Button, Modal } from 'antd'
-import FormInput from './Form'
+import { useState } from 'react';
+import { Button, Modal } from 'antd';
+import FormInput from '../src/Form';
 
+const ModalButton = ({ onSuccess }) => {
+    const [modalOpen, setModalOpen] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
+  
+    const openModal = () => {
+      setModalOpen(true);
+    };
+  
+    const closeModal = () => {
+      setModalOpen(false);
+    };
 
-const ModalButton = () => {
-    const [ modalOpen, setModalOpen ] = useState(false)
+    const handleSuccess = (message) => {
+      setSuccessMessage(message);
+      closeModal();
+    };
+  
     return (
-        <>
-            <Button type='primary' onClick={() => setModalOpen(true)}>
-                Add Contact
-            </Button>
-            <Modal
-            title='Add Contact'
-            centered
-            open={modalOpen}
-            onOk={() => setModalOpen(false) }
-            onCancel={() => setModalOpen(false)}
-            >
-                <FormInput/>
-            </Modal>
-        </>
-    )
-}
+      <>
+        <Button type='primary' onClick={openModal}>
+          Add Contact
+        </Button>
+        <Modal
+          title='Add Contact'
+          centered
+          visible={modalOpen}
+          onOk={closeModal}
+          onCancel={closeModal}
+          footer={null}
+        >
+          <FormInput onSuccess={handleSuccess} />
+        </Modal>
+      </>
+    );
+  };
 
-export default ModalButton
+export default ModalButton;

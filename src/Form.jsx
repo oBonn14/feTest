@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Form, Input, Space } from 'antd';
-const SubmitButton = ({ form }) => {
+import axios from 'axios';
+const SubmitButton = ({ form, onSuccess }) => {
   const [submittable, setSubmittable] = React.useState(false);
 
   // Watch all values
@@ -19,13 +20,28 @@ const SubmitButton = ({ form }) => {
         },
       );
   }, [form, values]);
+
+  const onSubmit = async () => {
+    try {
+      const response = await axios.post('https://contact.herokuapp.com/contact', values);
+      if (response.status === 201) {
+        const data = response.data;
+        onSuccess(data);
+      } else {
+        console.log('error cok');
+      }
+    } catch (error) {
+      console.log('Terjadi kesalahan:', error);
+    }
+  };
+
   return (
-    <Button type="primary" htmlType="submit" disabled={!submittable}>
+    <Button type="primary" htmlType="submit" disabled={!submittable} onClick={onSubmit}>
       Submit
     </Button>
   );
 };
-const FormInput = () => {
+const FormInput = ({ onSuccess }) => {
   const [form] = Form.useForm();
   return (
     <Form form={form} name="validateOnly" layout="vertical" autoComplete="off">
@@ -75,7 +91,7 @@ const FormInput = () => {
       </Form.Item>
       <Form.Item>
         <Space>
-          <SubmitButton form={form} />
+          <SubmitButton form={form} onSuccess={onSuccess} />
           <Button htmlType="reset">Reset</Button>
         </Space>
       </Form.Item>
