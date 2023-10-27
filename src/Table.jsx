@@ -64,12 +64,12 @@ const TableData = () => {
   const save = async (key) => {
     try {
       const row = await form.validateFields();
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.id);
-  
-      if (index > -1) {
-        // Update data di server
-        await updateData(newData[index]);
+    const newData = [...data];
+    const index = newData.findIndex((item) => key === item.id);
+
+    if (index > -1) {
+      const id = newData[index].id;
+      await updateData(row, id);
         setData(newData);
         setEditingKey('');
       } else {
@@ -82,17 +82,16 @@ const TableData = () => {
     }
   };
 
-  async function updateData(updatedRow) {
+  async function updateData(updatedRow, id) {
     try {
-      const { id, ...dataWithoutId } = updatedRow; // Pisahkan ID dari data
+      const dataWithoutId = updatedRow;
       const response = await axios.put(`https://contact.herokuapp.com/contact/${id}`, dataWithoutId, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
   
-      if (response.status === 200) {
-        // Update data di tabel
+      if (response.status === 201) {
         const newData = [...data];
         const index = newData.findIndex((item) => id === item.id);
         newData[index] = updatedRow;
@@ -105,6 +104,7 @@ const TableData = () => {
       console.error('Gagal memperbarui data:', error);
     }
   }
+  
   
 
   const columns = [
@@ -130,7 +130,7 @@ const TableData = () => {
         title: 'Photo',
         dataIndex: 'photo',
         width: '40%',
-        editable: false,
+        editable: true,
         render: (photo, record) => (
           <img src={photo} alt={record.firstName} style={{ maxWidth: '100px' }} />
         ),
