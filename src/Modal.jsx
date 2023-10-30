@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button, Modal } from 'antd';
 import FormInput from '../src/Form';
@@ -21,7 +22,7 @@ const ModalButton = ({ onSuccess }) => {
   
     return (
       <>
-        <Button type='primary' onClick={openModal}>
+        <Button type='primary' onClick={openModal} style={{marginBottom: 20, marginRight: 10}}>
           Add Contact
         </Button>
         <Modal

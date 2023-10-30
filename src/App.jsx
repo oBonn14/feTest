@@ -64,7 +64,6 @@ const App = () => {
           onClose={closeAlert}
         />
       )}
-            Content uhuy
             <TableData/>
           </Content>
         </Layout>

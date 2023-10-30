@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
+import { EditOutlined, BookOutlined, DeleteOutlined } from '@ant-design/icons';
+import ModalDetailUser from './ModalDetailUser'
 
 const editTableCell = ({ editing, dataIndex, title, inputType, children, ...restProps }) => {
   const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
@@ -32,6 +34,41 @@ const TableData = () => {
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
   const [editingKey, setEditingKey] = useState('');
+  const [detail, setDetail] = useState({})
+  const [detailUserModalVisible, setDetailUserModalVisible] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+
+  const handleDelete = async (record) => {
+    setIsDeleting(true);
+  
+    const id = record.id;
+  
+    const response = await axios.delete(`https://contact.herokuapp.com/contact/${id}`);
+  
+    if (response.status === 204) {
+      setData(data.filter((item) => item.id !== id));
+    } else {
+      // tampilkan notif error
+      alert('Gagal menghapus data');
+    }
+  
+    setIsDeleting(false);
+  };
+  
+  
+
+  const handleDetailUserModalOpen = (record) => {
+    const detail = JSON.parse(record.data);
+    setDetail(detail);
+    setDetailUserModalVisible(true)
+  };
+
+  const handleDetailUserModalClose = () => {
+    setDetailUserModalVisible(false);
+  };
+  
+
 
   useEffect(() => {
     fetchData();
@@ -43,6 +80,34 @@ const TableData = () => {
       setData(apiData);
     });
   };
+
+  const detailUser = async (record) => {
+    try{
+      const response = await axios.get(`https://contact.herokuapp.com/contact/${record.id}`)
+      console.log('response detail : ', response);
+       setDetail(response.data)
+       if(response === 200){
+        console.log('ok aman', response.data)
+         return response ===200
+       }
+       setDetailUserModalVisible(true)
+    } catch(err){
+      console.log('gagal ambil data: ',err)
+    }
+  }
+
+  const isDetail = (record) => record.id === detail
+
+  const getDetail = (record) => {
+    form.setFieldValue({
+      firstName:'',
+      lastName:'',
+      age:'',
+      photo:'',
+      ...record,
+    })
+    setDetail(record.id)
+  }
 
   const isEditing = (record) => record.id === editingKey;
 
@@ -64,14 +129,16 @@ const TableData = () => {
   const save = async (key) => {
     try {
       const row = await form.validateFields();
-    const newData = [...data];
-    const index = newData.findIndex((item) => key === item.id);
+      const newData = [...data];
+      const index = newData.findIndex((item) => key === item.id);
 
-    if (index > -1) {
-      const id = newData[index].id;
-      await updateData(row, id);
+      if (index > -1) {
+        const id = newData[index].id;
+        await updateData(row, id);
+        newData[index] = { ...newData[index], ...row }
         setData(newData);
         setEditingKey('');
+        
       } else {
         newData.push(row);
         setData(newData);
@@ -90,18 +157,17 @@ const TableData = () => {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.status === 201) {
-        const newData = [...data];
-        const index = newData.findIndex((item) => id === item.id);
-        newData[index] = updatedRow;
-        setData(newData);
         console.log('Data berhasil diperbarui');
+        alert('Update Data Success')
       } else {
         console.error('Gagal memperbarui data:', response.statusText);
+        alert('test')
       }
     } catch (error) {
       console.error('Gagal memperbarui data:', error);
+      alert('error test')
     }
   }
   
@@ -129,10 +195,10 @@ const TableData = () => {
     {
         title: 'Photo',
         dataIndex: 'photo',
-        width: '40%',
+        width: '30%',
         editable: true,
         render: (photo, record) => (
-          <img src={photo} alt={record.firstName} style={{ maxWidth: '100px' }} />
+          <img src={photo} alt={record.firstName} style={{ maxWidth: '70px', height: '70px', borderRadius: '50%'}} />
         ),
       },
     {
@@ -155,16 +221,27 @@ const TableData = () => {
               </Popconfirm>
             </span>
           ) : (
+            <>
             <Typography.Link
               disabled={editingKey !== ''}
               onClick={() => edit(record)}
-            >
-              Edit
+              >
+              <EditOutlined style={{ marginRight: '20px'}} />
             </Typography.Link>
-          );
+            
+            <Typography.Link onClick={() => detailUser(record)}>
+            <BookOutlined  style={{ marginRight: '20px'}}/>
+          </Typography.Link>
+          
+          <Typography.Link onClick={() => handleDelete(record)} loading={isDeleting}>
+          <DeleteOutlined />
+          </Typography.Link>
+              </>
+          )
         },
       },
     ];
+    
 
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
@@ -183,6 +260,7 @@ const TableData = () => {
   });
 
   return (
+    <>
     <Form form={form} component={false}>
       <Table
         components={{
@@ -199,7 +277,16 @@ const TableData = () => {
         }}
       />
     </Form>
+    {detail && (
+      <ModalDetailUser
+      visible={detailUserModalVisible}
+      onCancel={handleDetailUserModalClose}
+      record={detail}
+      />
+      )}
+    </>
   );
+  
 };
 
 export default TableData;
